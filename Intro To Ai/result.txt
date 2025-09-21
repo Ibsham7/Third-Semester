@@ -1,0 +1,7 @@
+Levenshtein distance is 7
+Insertions 0
+
+Deletions 2
+
+Substitutions 5
+
