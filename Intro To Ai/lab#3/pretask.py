@@ -1,4 +1,4 @@
-percept = ['Hamza','ALi','Ahmed','Saad', 'ibsham'] 
+percept = ['Hamza','ALi','Ahmed','Saad', 'huziafa'] 
 states = ['happy','sad','angry','Normal' ,'energetic'] 
 rules = ['smile','cry','shouting','Coding', 'excited']  
 def getState(precept_value):
