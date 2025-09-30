@@ -5,7 +5,8 @@ using namespace std;
 struct Node {
     int data;
     Node* next;
-    Node(int val) : data(val), next(nullptr) {}
+    Node* prev;
+    Node(int val) : data(val), next(nullptr), prev(nullptr) {}
 };
 
 class CircularLinkedList {
@@ -24,10 +25,16 @@ public:
     void push_front(int val) {
         Node* node = new Node(val);
         if (!tail) {
+            // First node in the list
             tail = node;
-            tail->next = tail;
+            tail->next = tail;  // Points to itself
+            tail->prev = tail;  // Points to itself
         } else {
-            node->next = tail->next;
+            // Insert before current head (tail->next)
+            Node* head = tail->next;
+            node->next = head;
+            node->prev = tail;
+            head->prev = node;
             tail->next = node;
         }
         ++count;
@@ -52,8 +59,11 @@ public:
         Node* cur = tail->next; // head
         for (size_t i = 0; i < idx - 1; ++i) cur = cur->next;
         Node* node = new Node(val);
-        node->next = cur->next;
+        Node* nextNode = cur->next;
+        node->next = nextNode;
+        node->prev = cur;
         cur->next = node;
+        nextNode->prev = node;
         ++count;
     }
 
@@ -62,13 +72,15 @@ public:
         if (empty()){
             cout<<"list is empty "<<endl;
             return;
-        }   
+        }
         Node* head = tail->next;
         if (head == tail) { // only one element
             delete head;
             tail = nullptr;
         } else {
-            tail->next = head->next;
+            Node* newHead = head->next;
+            tail->next = newHead;
+            newHead->prev = tail;
             delete head;
         }
         --count;
@@ -101,28 +113,50 @@ void print() const {
 void ZigZagFormat() {
     if (empty() || count < 2) return;
 
-    Node* temp = tail->next; 
-    size_t index = 0;
+    bool changed = true;
+    while (changed) {
+        changed = false;
+        Node* current = tail->next; // Start from head
 
-    
-    do {
-        Node* nextNode = temp->next;
+        for (size_t i = 0; i < count - 1; ++i) {
+            Node* nextNode = current->next;
 
-        if (index % 2 == 0) {
-            if (temp->data > nextNode->data) {
-                Swap(temp, nextNode);
+            if (i % 2 == 0) {
+                // Even index: should be smaller than next
+                if (current->data > nextNode->data) {
+                    Swap(current, nextNode);
+                    changed = true;
+                }
+            } else {
+                // Odd index: should be larger than next
+                if (current->data < nextNode->data) {
+                    Swap(current, nextNode);
+                    changed = true;
+                }
             }
-        } else {
-            if (temp->data < nextNode->data) {
-                Swap(temp, nextNode);
-            }
+
+            current = nextNode;
         }
-
-        temp = temp->next;
-        index++;
-    } while (temp != tail->next);
+    }
     print();
 }
+
+    bool IsPalindrome(){
+        if (empty() || count == 1) return true;
+
+        Node* left = tail->next; 
+        Node* right = tail;      
+
+        for (int i = 0; i < count / 2; ++i) {
+            if (left->data != right->data) {
+                return false;
+            }
+            left = left->next;
+            right = right->prev;
+        }
+
+        return true;
+    } 
 };
 
 
@@ -139,7 +173,8 @@ void ZigZagFormat() {
                  << "6) Print\n"
                  << "7) ZigZag format\n"
                  << "8) Size\n"
-                 << "9) Exit\n"
+                 << "9) Check palindrome\n"
+                 << "10) Exit\n"
                  << "Choose an option: ";
             int choice;
             if (!(cin >> choice)) {
@@ -149,7 +184,7 @@ void ZigZagFormat() {
                 continue;
             }
 
-            if (choice == 9) break;
+            if (choice == 10) break;
 
             switch (choice) {
                 case 1: {
@@ -206,6 +241,11 @@ void ZigZagFormat() {
                 }
                 case 8: {
                     cout << "Size: " << list.size() << "\n";
+                    break;
+                }
+                case 9: {
+                    bool isPal = list.IsPalindrome();
+                    cout << "List is " << (isPal ? "" : "not ") << "a palindrome.\n";
                     break;
                 }
                 default:
