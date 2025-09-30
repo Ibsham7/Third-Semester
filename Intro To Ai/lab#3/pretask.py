@@ -18,6 +18,6 @@ def getRules(state_value):
 def simpleReflexAgent(percept): return getRules(getState(percept)) 
 print("Select the person")
 print("0: Hamza\n","1: ALi\n", "2: Ahmad\n","3: Saad\n" , "4: Ibsham")   
-num = int(input("Enter the mood"))
+num = int(input("Enter the mood "))
 rule = simpleReflexAgent(percept[num]) 
 print(rule) 
