@@ -1,9 +1,5 @@
-# des_full.py
-# Basic DES implementation with encryption + decryption
-
 from generateRoundkeys import generateRoundKeys
-
-# ---------- Initial and Final Permutation Tables ----------
+#all the tables that are prervoiusly harcoded
 IP = [58, 50, 42, 34, 26, 18, 10, 2,
       60, 52, 44, 36, 28, 20, 12, 4,
       62, 54, 46, 38, 30, 22, 14, 6,
@@ -22,7 +18,6 @@ FP = [40, 8, 48, 16, 56, 24, 64, 32,
       34, 2, 42, 10, 50, 18, 58, 26,
       33, 1, 41, 9, 49, 17, 57, 25]
 
-# ---------- Expansion Table ----------
 E = [32, 1, 2, 3, 4, 5,
      4, 5, 6, 7, 8, 9,
      8, 9, 10, 11, 12, 13,
@@ -32,7 +27,11 @@ E = [32, 1, 2, 3, 4, 5,
      24, 25, 26, 27, 28, 29,
      28, 29, 30, 31, 32, 1]
 
-# ---------- S-boxes ----------
+P = [16, 7, 20, 21, 29, 12, 28, 17,
+     1, 15, 23, 26, 5, 18, 31, 10,
+     2, 8, 24, 14, 32, 27, 3, 9,
+     19, 13, 30, 6, 22, 11, 4, 25]
+
 S_boxes = [
     # S1
     [[14,4,13,1,2,15,11,8,3,10,6,12,5,9,0,7],
@@ -76,7 +75,6 @@ S_boxes = [
      [2,1,14,7,4,10,8,13,15,12,9,0,3,5,6,11]]
 ]
 
-# ---------- Utility Functions ----------
 
 def string_to_bit_blocks(text):
     bits = ''.join(format(ord(c), '08b') for c in text)
@@ -105,13 +103,12 @@ def sbox_substitution(bits):
         result += list(map(int, format(val, '04b')))
     return result
 
-# ---------- DES Round Function ----------
+
 def f_function(R, K):
     expanded = permute(R, E)
     xored = xor(expanded, K)
-    return sbox_substitution(xored)
+    return permute(sbox_substitution(xored), P)
 
-# ---------- Encryption ----------
 def desEncryption(plaintext, key64):
     round_keys = generateRoundKeys(key64)
     blocks = string_to_bit_blocks(plaintext)
@@ -131,9 +128,8 @@ def desEncryption(plaintext, key64):
 
     return encrypted_blocks
 
-# ---------- Decryption ----------
 def desDecryption(encrypted_blocks, key64):
-    round_keys = generateRoundKeys(key64)[::-1]  # reverse keys
+    round_keys = generateRoundKeys(key64)[::-1]  
     decrypted_blocks = []
 
     for block in encrypted_blocks:
@@ -150,7 +146,6 @@ def desDecryption(encrypted_blocks, key64):
 
     return bits_to_string([b for block in decrypted_blocks for b in block])
 
-# ---------- MAIN ----------
 if __name__ == "__main__":
     plaintext = input("Enter plaintext: ")
     key64 = [0,0,1,1,0,1,0,1,  1,0,1,0,0,1,1,0,
