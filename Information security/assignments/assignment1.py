@@ -49,13 +49,12 @@ def decryption(key, cipherText):
             if k < len(cipherText):
                 transpositionMatrix[index][j] = cipherText[k]
                 k += 1
-    print(transpositionMatrix)
     # iterate the matrix to get plaintext
     plainText = ''
     for j in range(columns):
         for i in range(rows):
             plainText += transpositionMatrix[i][j]
-    
+    plainText = plainText.replace('_', ' ').strip()
     return plainText
 
 
