@@ -41,7 +41,8 @@ class AVL {
      int height(Node* node){
         return node?node->height:0;
      }
-          Node* rightRotation( Node* node){
+     
+    Node* rightRotation( Node* node){
         Node* B = node->left;
         Node* temp = B->right;
 
